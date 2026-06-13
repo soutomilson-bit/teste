@@ -1,145 +1,295 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Consolidado de Aluguéis e Gestão Financeira</title>
-<style>
-:root{
-  --bg:#f5f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--primary:#1f4e79;--accent:#0f766e;--warn:#b45309;--danger:#b91c1c;--line:#e5e7eb;
-}
-*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-header{background:linear-gradient(135deg,#163b5c,#24699a);color:white;padding:34px 28px;text-align:center}
-header h1{margin:0 0 8px;font-size:30px} header p{margin:0;color:#dbeafe;font-size:15px}
-.container{max-width:1180px;margin:0 auto;padding:24px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 24px rgba(15,23,42,.06)}
-.card h2{font-size:20px;margin:0 0 14px;color:var(--primary)} .card h3{font-size:16px;margin:0 0 10px;color:var(--primary)}
-.kpi .label{font-size:13px;color:var(--muted);margin-bottom:8px}.kpi .value{font-size:27px;font-weight:800;color:var(--primary)}.kpi .sub{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.4}
-table{width:100%;border-collapse:collapse;font-size:14px} th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left} th{background:#f1f5f9;color:#334155;font-size:12px;text-transform:uppercase;letter-spacing:.04em} td.num{text-align:right;font-variant-numeric:tabular-nums}.rank{font-weight:bold;color:var(--primary)}
-.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}.ok{background:#dcfce7;color:#166534}.mid{background:#fef3c7;color:#92400e}.info{background:#dbeafe;color:#1e40af}
-.section{margin-bottom:20px}.two{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}.note{line-height:1.55;color:#374151;font-size:15px}.note strong{color:#111827}.bar{height:12px;border-radius:999px;background:#e5e7eb;overflow:hidden}.bar span{display:block;height:100%;background:#1f4e79}.small{font-size:12px;color:var(--muted)}
-.footer{color:#6b7280;text-align:center;font-size:12px;margin:28px 0}
-@media(max-width:900px){.grid,.grid3,.two{grid-template-columns:1fr} header h1{font-size:24px}.kpi .value{font-size:23px}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard de Aluguéis - 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 28px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #d1d5db;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #6b7280;
+      text-transform: uppercase;
+    }
+
+    .card .number {
+      font-size: 30px;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: white;
+      padding: 24px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    canvas {
+      max-height: 420px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    .ok {
+      color: #15803d;
+      font-weight: bold;
+    }
+
+    .alerta {
+      color: #b91c1c;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      padding: 24px;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
+
 <header>
-  <h1>Consolidado de Aluguéis, Despesas e Distribuição aos Herdeiros</h1>
-  <p>Período analisado: fevereiro/2022 a junho/2026 | Visão financeira, ranking e governança</p>
+  <h1>Dashboard de Pagamento de Aluguéis</h1>
+  <p>Visão fictícia de janeiro a junho de 2026</p>
 </header>
-<div class="container">
-  <section class="grid kpis">
-    <div class="card kpi"><div class="label">Total arrecadado em aluguéis</div><div class="value">R$ 277.964,85</div><div class="sub">Receita bruta consolidada no período</div></div>
-    <div class="card kpi"><div class="label">Total de despesas</div><div class="value">R$ 14.994,72</div><div class="sub">5,39% da arrecadação total</div></div>
-    <div class="card kpi"><div class="label">Saldo líquido distribuível</div><div class="value">R$ 262.970,13</div><div class="sub">94,61% da receita preservada</div></div>
-    <div class="card kpi"><div class="label">Quantidade estimada de aluguéis</div><div class="value">53 meses</div><div class="sub">Pouco mais de 4 anos de gestão</div></div>
-  </section>
 
-  <section class="grid3">
-    <div class="card kpi"><div class="label">Média bruta mensal</div><div class="value">R$ 5.244,62</div><div class="sub">Considerando 53 meses</div></div>
-    <div class="card kpi"><div class="label">Média líquida mensal</div><div class="value">R$ 4.961,70</div><div class="sub">Após despesas registradas</div></div>
-    <div class="card kpi"><div class="label">Reserva sugerida para manutenção</div><div class="value">R$ 27.796,49</div><div class="sub">Referência conservadora: 10% da arrecadação</div></div>
-  </section>
+<main>
 
-  <section class="two section">
+  <section class="cards">
     <div class="card">
-      <h2>Resumo por período</h2>
+      <h3>Total de locatários</h3>
+      <div class="number">7</div>
+    </div>
+    <div class="card">
+      <h3>Pagaram todos os meses possíveis</h3>
+      <div class="number">5</div>
+    </div>
+    <div class="card">
+      <h3>Não pagaram todos os meses</h3>
+      <div class="number">2</div>
+    </div>
+    <div class="card">
+      <h3>Valor líquido recebido</h3>
+      <div class="number">R$ 37.161,50</div>
+    </div>
+  </section>
+
+  <section class="grid">
+
+    <div class="panel">
+      <h2>Meses pagos x meses não pagos por locatário</h2>
+      <canvas id="graficoPagamentos"></canvas>
+    </div>
+
+    <div class="panel">
+      <h2>Evolução do valor líquido recebido por mês</h2>
+      <canvas id="graficoValores"></canvas>
+    </div>
+
+    <div class="panel">
+      <h2>Resumo por locatário</h2>
       <table>
-        <thead><tr><th>Período</th><th class="num">Aluguéis</th><th class="num">Despesas</th><th class="num">Saldo líquido</th><th class="num">Despesa %</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Locatário</th>
+            <th>Meses pagos</th>
+            <th>Meses não pagos</th>
+            <th>Status</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr><td>Fev a Jun/2022</td><td class="num">R$ 14.503,00</td><td class="num">R$ 579,47</td><td class="num">R$ 13.923,53</td><td class="num">4,00%</td></tr>
-          <tr><td>Jul a Dez/2022</td><td class="num">R$ 18.216,00</td><td class="num">R$ 1.422,64</td><td class="num">R$ 16.793,36</td><td class="num">7,81%</td></tr>
-          <tr><td>Jan a Jun/2023</td><td class="num">R$ 25.781,00</td><td class="num">R$ 2.778,92</td><td class="num">R$ 23.002,08</td><td class="num">10,78%</td></tr>
-          <tr><td>Jul a Dez/2023</td><td class="num">R$ 28.241,00</td><td class="num">R$ 397,77</td><td class="num">R$ 27.843,23</td><td class="num">1,41%</td></tr>
-          <tr><td>Jan a Jun/2024</td><td class="num">R$ 36.506,00</td><td class="num">R$ 1.820,12</td><td class="num">R$ 34.685,88</td><td class="num">4,99%</td></tr>
-          <tr><td>Jul a Dez/2024</td><td class="num">R$ 40.278,00</td><td class="num">R$ 2.660,00</td><td class="num">R$ 37.618,00</td><td class="num">6,60%</td></tr>
-          <tr><td>Jan a Jun/2025</td><td class="num">R$ 32.036,89</td><td class="num">R$ 735,80</td><td class="num">R$ 31.301,09</td><td class="num">2,30%</td></tr>
-          <tr><td>Jun a Dez/2025</td><td class="num">R$ 42.348,03</td><td class="num">R$ 800,00</td><td class="num">R$ 41.548,03</td><td class="num">1,89%</td></tr>
-          <tr><td>Jan a Jun/2026</td><td class="num">R$ 39.054,93</td><td class="num">R$ 3.800,00</td><td class="num">R$ 35.254,93</td><td class="num">9,73%</td></tr>
+          <tr><td>Garagem</td><td>6</td><td>0</td><td class="ok">Regular</td></tr>
+          <tr><td>Gabriele de Brito Lara</td><td>6</td><td>0</td><td class="ok">Regular</td></tr>
+          <tr><td>Marcos Paulo Gonçalves</td><td>6</td><td>0</td><td class="ok">Regular</td></tr>
+          <tr><td>Lee Anderson Loja</td><td>6</td><td>0</td><td class="ok">Regular</td></tr>
+          <tr><td>Estelita Rodrigues dos Santos</td><td>2</td><td>0</td><td class="ok">Regular desde entrada</td></tr>
+          <tr><td>Debora</td><td>3</td><td>3</td><td class="alerta">Atenção</td></tr>
+          <tr><td>Matheus Nunes</td><td>3</td><td>3</td><td class="alerta">Atenção</td></tr>
         </tbody>
       </table>
     </div>
-    <div class="card">
-      <h2>Leitura rápida</h2>
-      <p class="note"><strong>O resultado mostra uma gestão financeiramente positiva:</strong> de R$ 277.964,85 arrecadados, R$ 262.970,13 permaneceram líquidos após despesas. Isso representa preservação de 94,61% da receita.</p>
-      <p class="note"><strong>Atenção construtiva:</strong> as despesas consumiram R$ 14.994,72, enquanto uma reserva técnica conservadora de 10% exigiria R$ 27.796,49. Assim, a reserva recomendada seria aproximadamente R$ 12.801,77 acima do gasto realizado.</p>
-      <p class="note"><strong>Governança:</strong> o controle por período, status de pagamento e rateio por herdeiro dá rastreabilidade e reduz conflito, mas pode evoluir com conciliação bancária, comprovantes anexados e política formal de reserva.</p>
-    </div>
+
   </section>
 
-  <section class="two section">
-    <div class="card">
-      <h2>Ranking dos herdeiros por valor líquido acumulado</h2>
-      <table>
-        <thead><tr><th>Posição</th><th>Herdeiro</th><th class="num">Total acumulado</th><th class="num">Diferença para menor</th></tr></thead>
-        <tbody>
-          <tr><td class="rank">1º</td><td>Amarildo</td><td class="num">R$ 44.831,69</td><td class="num">R$ 1.156,11</td></tr>
-          <tr><td class="rank">2º</td><td>Ceia</td><td class="num">R$ 43.925,43</td><td class="num">R$ 249,85</td></tr>
-          <tr><td class="rank">2º</td><td>Duca</td><td class="num">R$ 43.925,43</td><td class="num">R$ 249,85</td></tr>
-          <tr><td class="rank">2º</td><td>Toia</td><td class="num">R$ 43.925,43</td><td class="num">R$ 249,85</td></tr>
-          <tr><td class="rank">2º</td><td>Milson</td><td class="num">R$ 43.925,43</td><td class="num">R$ 249,85</td></tr>
-          <tr><td class="rank">6º</td><td>Alex</td><td class="num">R$ 43.675,58</td><td class="num">R$ 0,00</td></tr>
-        </tbody>
-      </table>
-      <p class="small">Observação: diferenças decorrem dos valores informados em alguns períodos, especialmente Amarildo, Alex e Milson.</p>
-    </div>
-    <div class="card">
-      <h2>Pagamentos e status</h2>
-      <table>
-        <thead><tr><th>Status</th><th>Períodos</th><th>Comentário</th></tr></thead>
-        <tbody>
-          <tr><td><span class="badge ok">Pago</span></td><td>Fev-Jun/22, Jul-Dez/23, Jan-Jun/24</td><td>Pagamentos registrados como quitados.</td></tr>
-          <tr><td><span class="badge info">Em conta</span></td><td>Jul-Dez/22, Jan-Jun/23, Jul-Dez/24, Jan-Jun/25, Jun-Dez/25, Jan-Jun/26</td><td>Valores mantidos em conta, sugerindo controle de caixa.</td></tr>
-          <tr><td><span class="badge mid">Data específica</span></td><td>08/07/2022</td><td>Primeiro pagamento com data explícita para todos os herdeiros.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+</main>
 
-  <section class="grid3 section">
-    <div class="card"><h3>Crescimento da arrecadação</h3><p class="note">De R$ 14.503,00 no primeiro período para R$ 39.054,93 no último, houve aumento de aproximadamente <strong>169,29%</strong> na arrecadação semestral registrada.</p></div>
-    <div class="card"><h3>Maior período arrecadado</h3><p class="note"><strong>Junho a dezembro/2025</strong> foi o maior período da série, com R$ 42.348,03 em aluguéis e apenas R$ 800,00 em despesas.</p></div>
-    <div class="card"><h3>Maior pressão de despesas</h3><p class="note"><strong>Janeiro a junho/2023</strong> teve a maior representatividade de despesas, com 10,78% da arrecadação. Em 2026, o percentual também subiu para 9,73%.</p></div>
-  </section>
+<footer>
+  Dashboard gerado com dados fictícios para controle de aluguéis.
+</footer>
 
-  <section class="card section">
-    <h2>Evolução anual e comparação com crescimento de mercado</h2>
-    <table>
-      <thead><tr><th>Ano</th><th class="num">Aluguéis recebidos</th><th class="num">Crescimento vs ano anterior</th><th>Leitura</th></tr></thead>
-      <tbody>
-        <tr><td>2022 parcial</td><td class="num">R$ 32.719,00</td><td class="num">-</td><td>Base inicial de consolidação.</td></tr>
-        <tr><td>2023</td><td class="num">R$ 54.022,00</td><td class="num">65,11%</td><td>Crescimento forte, acima de reajustes típicos de aluguel de mercado.</td></tr>
-        <tr><td>2024</td><td class="num">R$ 76.784,00</td><td class="num">42,13%</td><td>Continuidade de expansão da receita, possivelmente por reajustes e maior ocupação.</td></tr>
-        <tr><td>2025</td><td class="num">R$ 74.384,92</td><td class="num">-3,12%</td><td>Pequena queda anual, ainda mantendo patamar alto.</td></tr>
-        <tr><td>2026 parcial</td><td class="num">R$ 39.054,93</td><td class="num">em andamento</td><td>Ano corrente parcial; não deve ser tratado como queda definitiva.</td></tr>
-      </tbody>
-    </table>
-    <p class="note"><strong>Comparativo inteligente:</strong> sem informar um índice oficial aplicado aos contratos, a leitura mais justa é comparar a evolução real da arrecadação com índices de mercado como IPCA, IGP-M ou reajustes contratuais. O crescimento acumulado da receita no período é expressivo e aparenta superar um reajuste meramente inflacionário, indicando combinação de reajuste, regularidade de recebimento e possível melhor aproveitamento dos imóveis.</p>
-  </section>
+<script>
+  const locatarios = [
+    "Garagem",
+    "Gabriele",
+    "Marcos Paulo",
+    "Lee Anderson",
+    "Estelita",
+    "Debora",
+    "Matheus"
+  ];
 
-  <section class="card section">
-    <h2>Quantidade de aluguéis, estabilidade e manutenção</h2>
-    <p class="note">Considerando o intervalo de fevereiro/2022 a junho/2026, a gestão acompanhou aproximadamente <strong>53 meses de aluguéis</strong>. A maior estabilidade aparece nos períodos em que os valores permanecem recorrentes e com baixa despesa proporcional, especialmente no segundo semestre de 2023, segundo semestre de 2025 e parte de 2024.</p>
-    <table>
-      <thead><tr><th>Indicador</th><th class="num">Valor</th><th>Análise</th></tr></thead>
-      <tbody>
-        <tr><td>Despesas realizadas</td><td class="num">R$ 14.994,72</td><td>Valor efetivamente gasto com despesas/manutenção no período.</td></tr>
-        <tr><td>Reserva mínima sugerida, 5%</td><td class="num">R$ 13.898,24</td><td>Próxima ao gasto realizado; cobre despesas históricas, mas com pouca folga.</td></tr>
-        <tr><td>Reserva conservadora sugerida, 10%</td><td class="num">R$ 27.796,49</td><td>Mais adequada para manutenção preventiva, vacância, reformas e emergências.</td></tr>
-        <tr><td>Diferença entre reserva 10% e gasto realizado</td><td class="num">R$ 12.801,77</td><td>Valor que poderia fortalecer o caixa de segurança dos imóveis.</td></tr>
-      </tbody>
-    </table>
-  </section>
+  const mesesPagos = [6, 6, 6, 6, 2, 3, 3];
+  const mesesNaoPagos = [0, 0, 0, 0, 0, 3, 3];
 
-  <section class="card section">
-    <h2>Prévia executiva sobre gestão e governança financeira</h2>
-    <p class="note">Ao longo de pouco mais de quatro anos, a gestão demonstra evolução relevante na arrecadação, controle de despesas e transparência no rateio entre herdeiros. O histórico permite enxergar receita bruta, despesas, saldo líquido, status dos valores e distribuição individual, o que representa uma base importante de governança patrimonial.</p>
-    <p class="note">O ponto mais positivo é a baixa representatividade das despesas frente ao total arrecadado, preservando quase 95% dos valores recebidos. O ponto de melhoria é formalizar uma política de reserva: antes de distribuir 100% do saldo, separar entre 5% e 10% da arrecadação para manutenção preventiva, vacância, regularização documental e obras emergenciais.</p>
-    <p class="note">Como evolução, recomenda-se manter uma aba mensal com data de pagamento, imóvel, locatário, valor bruto, despesa vinculada, comprovante, saldo líquido e status do repasse. Isso transforma o controle financeiro em uma prestação de contas simples, defensável e auditável.</p>
-  </section>
+  new Chart(document.getElementById("graficoPagamentos"), {
+    type: "bar",
+    data: {
+      labels: locatarios,
+      datasets: [
+        {
+          label: "Meses pagos",
+          data: mesesPagos,
+          backgroundColor: "#16a34a"
+        },
+        {
+          label: "Meses não pagos",
+          data: mesesNaoPagos,
+          backgroundColor: "#dc2626"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top"
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 6,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+  });
 
-  <div class="footer">Consolidado gerado com base nos valores informados. Recomenda-se validação com extratos bancários e comprovantes de despesas.</div>
-</div>
+  const meses = ["Jan/26", "Fev/26", "Mar/26", "Abr/26", "Mai/26", "Jun/26"];
+  const valoresLiquidos = [6682, 5790, 7898, 8910.50, 5790, 2091];
+
+  new Chart(document.getElementById("graficoValores"), {
+    type: "line",
+    data: {
+      labels: meses,
+      datasets: [
+        {
+          label: "Valor líquido recebido",
+          data: valoresLiquidos,
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.15)",
+          fill: true,
+          tension: 0.35
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top"
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return "R$ " + context.raw.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return "R$ " + value.toLocaleString("pt-BR");
+            }
+          }
+        }
+      }
+    }
+  });
+</script>
+
 </body>
 </html>
