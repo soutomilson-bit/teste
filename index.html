@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consolidado de Aluguéis - 1º Semestre de 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    :root {
+        --azul:#1e3a8a;
+        --azul2:#2563eb;
+        --verde:#16a34a;
+        --verde-bg:#dcfce7;
+        --amarelo:#ca8a04;
+        --amarelo-bg:#fef9c3;
+        --vermelho:#dc2626;
+        --vermelho-bg:#fee2e2;
+        --cinza:#64748b;
+        --bg:#f4f6f8;
+        --card:#ffffff;
+        --borda:#e5e7eb;
+    }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        background: var(--bg);
+        color: #1f2937;
+    }
+    header {
+        background: linear-gradient(135deg, var(--azul), var(--azul2));
+        color: white;
+        padding: 30px 18px;
+        text-align: center;
+    }
+    header h1 {
+        margin: 0;
+        font-size: 28px;
+    }
+    header p {
+        margin: 10px 0 0;
+        font-size: 15px;
+        opacity: .95;
+    }
+    .container {
+        max-width: 1220px;
+        margin: 24px auto;
+        padding: 0 18px;
+    }
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .card {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 4px 14px rgba(15,23,42,0.08);
+        text-align: center;
+    }
+    .card h3 {
+        margin: 0 0 8px;
+        color: var(--cinza);
+        font-size: 13px;
+        text-transform: uppercase;
+        line-height: 1.35;
+    }
+    .card .value {
+        font-size: 24px;
+        font-weight: 800;
+        color: #111827;
+    }
+    .section {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 14px rgba(15,23,42,0.08);
+    }
+    h2 {
+        margin: 0 0 14px;
+        color: var(--azul);
+        font-size: 22px;
+    }
+    h3 {
+        color: #334155;
+        margin-bottom: 8px;
+    }
+    .note {
+        background: #f8fafc;
+        border-left: 5px solid var(--azul2);
+        padding: 14px;
+        border-radius: 10px;
+        line-height: 1.55;
+    }
+    .note.warning { border-left-color: #f59e0b; }
+    .note.danger { border-left-color: var(--vermelho); }
+    .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        font-size: 14px;
+    }
+    th, td {
+        padding: 11px 10px;
+        border-bottom: 1px solid var(--borda);
+        text-align: left;
+        vertical-align: top;
+    }
+    th {
+        background: #eef2ff;
+        color: var(--azul);
+        font-weight: 700;
+    }
+    tr:hover {
+        background: #f8fafc;
+    }
+    .status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    .green { background: var(--verde-bg); color: #166534; }
+    .yellow { background: var(--amarelo-bg); color: #854d0e; }
+    .red { background: var(--vermelho-bg); color: #991b1b; }
+    .blue { background: #dbeafe; color: #1e40af; }
+    .muted { color: var(--cinza); font-size: 13px; }
+    canvas {
+        max-height: 360px;
+    }
+    .kpi-line {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+    .pill {
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: #f1f5f9;
+        font-weight: 700;
+        font-size: 13px;
+    }
+    footer {
+        text-align: center;
+        padding: 26px;
+        color: var(--cinza);
+        font-size: 13px;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Consolidado de Aluguéis - 1º Semestre de 2026</h1>
+    <p>Critério atualizado: somente Status “Pago” é considerado quitado. “Pago com atraso” é quitado com alerta. “Pendente” ou campo em branco é tratado como pendência.</p>
+</header>
+
+<div class="container">
+
+    <div class="cards">
+        <div class="card">
+            <h3>Valor Bruto</h3>
+            <div class="value">R$ 39.326,00</div>
+        </div>
+        <div class="card">
+            <h3>Valor Líquido</h3>
+            <div class="value">R$ 36.407,00</div>
+        </div>
+        <div class="card">
+            <h3>Valor Pago à Imobiliária</h3>
+            <div class="value">R$ 2.919,00</div>
+        </div>
+        <div class="card">
+            <h3>Valor pago por Herdeiro à imobiliária</h3>
+            <div class="value">R$ 486,50</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Resumo Executivo</h2>
+        <div class="note">
+            O primeiro semestre de 2026 encerra com <strong>R$ 39.326,00</strong> de valor bruto e 
+            <strong>R$ 36.407,00</strong> de valor líquido informado. 
+            O total pago à imobiliária foi de <strong>R$ 2.919,00</strong>, equivalente a 
+            <strong>R$ 486,50 por herdeiro</strong>.
+            <br><br>
+            A <strong>Débora Cristina Costa Freire</strong> foi analisada apenas pelo acordo informado, que consta como 
+            <strong>quitado</strong>. Para os demais, os registros sem pagamento até o fechamento do semestre foram classificados como pendentes.
+        </div>
+        <div class="kpi-line">
+            <span class="pill">Quitado: R$ 36.407,00</span>
+            <span class="pill">Pendente estimado: R$ 2.146,50</span>
+            <span class="pill">Pago com atraso: R$ 1.336,50</span>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="section">
+            <h2>Gráfico por Situação</h2>
+            <canvas id="statusChart"></canvas>
+            <p class="muted">Verde: quitado | Amarelo: pago com atraso / atenção | Vermelho: pendente.</p>
+        </div>
+
+        <div class="section">
+            <h2>Valor Líquido Pago por Inquilino</h2>
+            <canvas id="inquilinoChart"></canvas>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Consolidado por Inquilino</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Inquilino / Origem</th>
+                    <th>Meses quitados</th>
+                    <th>Total líquido pago</th>
+                    <th>Pendência estimada</th>
+                    <th>Situação</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Aluguel Lee Anderson Loja</td>
+                    <td>Jan, Fev, Mar, Abr, Mai, Jun</td>
+                    <td>R$ 16.200,00</td>
+                    <td>R$ 0,00</td>
+                    <td><span class="status green">Quitado</span></td>
+                    <td>Quitado no semestre, porém com pagamentos recorrentes após a primeira quinzena.</td>
+                </tr>
+                <tr>
+                    <td>Aluguel Garagem</td>
+                    <td>Jan, Fev, Mar, Abr, Mai, Jun</td>
+                    <td>R$ 7.200,00</td>
+                    <td>R$ 0,00</td>
+                    <td><span class="status green">Quitado</span></td>
+                    <td>Todos os meses pagos.</td>
+                </tr>
+                <tr>
+                    <td>Aluguel Gabriele de Brito Lara</td>
+                    <td>Jan, Fev, Mar, Abr, Mai, Jun</td>
+                    <td>R$ 6.480,00</td>
+                    <td>R$ 0,00</td>
+                    <td><span class="status green">Quitado</span></td>
+                    <td>Pagamento regular durante o semestre.</td>
+                </tr>
+                <tr>
+                    <td>Marcos Paulo Gonçalves</td>
+                    <td>Jan, Fev, Mar, Abr, Mai</td>
+                    <td>R$ 4.050,00</td>
+                    <td>R$ 810,00</td>
+                    <td><span class="status red">Pendente</span></td>
+                    <td>Junho consta como pendente e sem data de compensação.</td>
+                </tr>
+                <tr>
+                    <td>Aluguel Matheus Nunes</td>
+                    <td>Mar, Abr, Mai</td>
+                    <td>R$ 3.888,00</td>
+                    <td>R$ 1.336,50</td>
+                    <td><span class="status red">Pendente</span></td>
+                    <td>Maio foi pago com atraso em 15/06. Junho consta como pendente.</td>
+                </tr>
+                <tr>
+                    <td>Aluguel Estelita Rodrigues dos Santos</td>
+                    <td>Abr, Jun</td>
+                    <td>R$ 1.782,00</td>
+                    <td>R$ 0,00</td>
+                    <td><span class="status green">Quitado</span></td>
+                    <td>Pagamentos confirmados conforme registros disponíveis.</td>
+                </tr>
+                <tr>
+                    <td>Débora Cristina Costa Freire</td>
+                    <td>Acordo: entrada + 3 parcelas</td>
+                    <td>R$ 2.678,00</td>
+                    <td>R$ 0,00</td>
+                    <td><span class="status blue">Acordo Quitado</span></td>
+                    <td>Entrada em janeiro, parcelas em março, abril e maio. Junho consta como quitado pelo acordo.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Pendências em Aberto</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Inquilino</th>
+                    <th>Mês de referência</th>
+                    <th>Valor líquido estimado</th>
+                    <th>Status</th>
+                    <th>Critério</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Marcos Paulo Gonçalves</td>
+                    <td>Junho/2026</td>
+                    <td>R$ 810,00</td>
+                    <td><span class="status red">Pendente</span></td>
+                    <td>Status informado como pendente e sem compensação bancária.</td>
+                </tr>
+                <tr>
+                    <td>Aluguel Matheus Nunes</td>
+                    <td>Junho/2026</td>
+                    <td>R$ 1.336,50</td>
+                    <td><span class="status red">Pendente</span></td>
+                    <td>Status informado como pendente e sem compensação bancária.</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Total pendente estimado:</strong> R$ 2.146,50</p>
+    </div>
+
+    <div class="section">
+        <h2>Pagamentos com Atraso e Possível Juros</h2>
+        <div class="note warning">
+            A identificação de atraso foi feita pela comparação entre o mês de referência e a data de compensação no banco.
+            Como não há vencimento formal informado na base, foi adotado como alerta pagamentos compensados após a primeira quinzena ou no mês seguinte.
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Inquilino</th>
+                    <th>Competência</th>
+                    <th>Data de compensação</th>
+                    <th>Status</th>
+                    <th>Juros / Acréscimo</th>
+                    <th>Leitura</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Aluguel Matheus Nunes</td>
+                    <td>Maio/2026</td>
+                    <td>15/06/2026</td>
+                    <td><span class="status yellow">Pago com atraso</span></td>
+                    <td>Possível acréscimo: líquido de R$ 1.336,50 versus R$ 1.215,00 em março.</td>
+                    <td>Pago fora do mês de competência.</td>
+                </tr>
+                <tr>
+                    <td>Aluguel Lee Anderson Loja</td>
+                    <td>Jan a Jun/2026</td>
+                    <td>19/01, 23/02, 19/03, 22/04, 19/05, 17/06</td>
+                    <td><span class="status yellow">Atenção</span></td>
+                    <td>Não identificado nos dados.</td>
+                    <td>Maior recorrência de pagamento tardio, apesar de quitado.</td>
+                </tr>
+                <tr>
+                    <td>Marcos Paulo Gonçalves</td>
+                    <td>Jan, Mar, Abr, Mai e Jun</td>
+                    <td>13/01, 11/03, 14/04, 18/05 e junho pendente</td>
+                    <td><span class="status yellow">Atenção</span></td>
+                    <td>Não identificado nos dados.</td>
+                    <td>Costuma pagar após a primeira semana e fechou junho pendente.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Ranking de Atraso</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Inquilino</th>
+                    <th>Motivo</th>
+                    <th>Classificação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1º</td>
+                    <td>Lee Anderson Loja</td>
+                    <td>Pagamentos quitados, mas quase sempre após a primeira quinzena.</td>
+                    <td><span class="status yellow">Mais recorrente em atraso</span></td>
+                </tr>
+                <tr>
+                    <td>2º</td>
+                    <td>Matheus Nunes</td>
+                    <td>Pagamento de maio compensado somente em junho e junho pendente.</td>
+                    <td><span class="status red">Maior risco atual</span></td>
+                </tr>
+                <tr>
+                    <td>3º</td>
+                    <td>Marcos Paulo Gonçalves</td>
+                    <td>Pagamentos frequentemente após o dia 10 e junho pendente.</td>
+                    <td><span class="status red">Pendente</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Acordo Débora Cristina Costa Freire</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parcela</th>
+                    <th>Valor</th>
+                    <th>Data informada</th>
+                    <th>Situação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Entrada</td>
+                    <td>R$ 892,00</td>
+                    <td>21/01/2026</td>
+                    <td><span class="status green">Pago</span></td>
+                </tr>
+                <tr>
+                    <td>Parcela 1/3</td>
+                    <td>R$ 893,33</td>
+                    <td>20/03/2026</td>
+                    <td><span class="status green">Pago</span></td>
+                </tr>
+                <tr>
+                    <td>Parcela 2/3</td>
+                    <td>R$ 893,33</td>
+                    <td>22/04/2026</td>
+                    <td><span class="status green">Pago</span></td>
+                </tr>
+                <tr>
+                    <td>Parcela 3/3</td>
+                    <td>R$ 893,33</td>
+                    <td>06/05/2026</td>
+                    <td><span class="status green">Pago</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Situação final:</strong> <span class="status blue">Acordo Quitado</span></p>
+    </div>
+
+    <div class="section">
+        <h2>Conclusão</h2>
+        <div class="note danger">
+            O semestre apresenta boa realização financeira, com a maior parte dos valores quitados. 
+            O principal ponto de atenção por recorrência de atraso é <strong>Lee Anderson Loja</strong>, ainda que esteja quitado. 
+            O maior risco atual de pendência está em <strong>Matheus Nunes</strong>, por ter pago maio com atraso e constar junho pendente.
+            <strong>Marcos Paulo Gonçalves</strong> também requer acompanhamento por junho estar pendente.
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    Relatório gerado com base nos dados informados para janeiro a junho de 2026.
+</footer>
+
+<script>
+new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Quitado', 'Pago com atraso / Atenção', 'Pendente'],
+        datasets: [{
+            data: [36407, 1336.50, 2146.50],
+            backgroundColor: ['#16a34a', '#facc15', '#dc2626'],
+            borderColor: '#ffffff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+
+new Chart(document.getElementById('inquilinoChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Lee Anderson', 'Garagem', 'Gabriele', 'Marcos', 'Matheus', 'Débora', 'Estelita'],
+        datasets: [{
+            label: 'Valor líquido pago',
+            data: [16200, 7200, 6480, 4050, 3888, 2678, 1782],
+            backgroundColor: '#2563eb'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
